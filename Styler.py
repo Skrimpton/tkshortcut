@@ -39,10 +39,9 @@ class Styler:
         # self.style.theme_use          ("clam")                            # use "clam"-theme
         # self.style.theme_use          ("classic")                         # use "classic"-theme
         # self.style.theme_use          ("vista")                           # use "vista"-theme (not available on linux)
-        self._style_entry               ()
+        self.become_stylish             ()
 
-    def _style_entry(self):
-
+    def become_stylish(self):
         self.style.layout(      "TEntry",
             [
                 (   'Entry.plain.field', {
