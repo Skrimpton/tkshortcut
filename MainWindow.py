@@ -184,7 +184,7 @@ class MainWindow:
     # --- ### INFINTE LOOP ### ---------------------------------------------------------------------------------
     # DECLARE AND START THE TIMER THAT LETS < CTRL + C > IN THE TERMINAL CLOSE THE WINDOW
     #
-    def startCtrlCTimer(self): # <⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅    START "KEEP ACTIVE"-TIMER ON/OFF
+    def startCtrlCTimer(self): # <⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅           START "KEEP ACTIVE"-TIMER
                                                       #         I LIKE TO KEEP A 'self.'-REFERENCE OF '.after()'
         self.ctrl_c_timer = self.root.after (         #     THIS WAY WE CAN STOP THE TIMER AND AVOID ERRORS LIKE
             80,self.startCtrlCTimer                   #   "NO COMMAND FOUND", IF TIMER FIRES AFTER / WHILE DOING
