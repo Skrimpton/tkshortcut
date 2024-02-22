@@ -91,7 +91,7 @@ class MainWindow:
 
     def on_changes_exec(self,event=None): # event info of no value
 
-        if os.path.exists(self.exectext.entry_text.get()):
+        if os.path.isfile(self.exectext.entry_text.get()):
             self.filenametext.configure(state='enabled')
         else:
             self.filenametext.configure(state='disabled')
