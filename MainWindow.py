@@ -159,9 +159,6 @@ class MainWindow:
                                      message="SHORTCUT WAS NOT CREATED")
                 );
 
-
-            # # file.close                        ()
-
     def choose_file(self):
         self.exectext.delete                (0, tk.END)
         self.exectext.insert                (0, fd.askopenfilename())
