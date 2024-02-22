@@ -40,19 +40,13 @@ class MainWindow:
     # ------------------------------------------------------------------------------
     #                                                         Construction functions
     def declareUi(self):
-        self.main_frame =                   ttk.Frame(self.root)
-        self.titleframe =                   ttk.Frame(self.main_frame)
-        # self.titleframe.columnconfigure     (0, weight=0)
-        self.titleframe.columnconfigure     (1, weight=1)
+        self.main_frame                     = ttk.Frame       (self.root)
+        self.titleframe                     = ttk.Frame       (self.main_frame)
 
-        self.buttonframe                    = ttk.Frame(self.main_frame)
-        self.buttonframe.columnconfigure    (0, weight=1)
-        self.buttonframe.columnconfigure    (1, weight=1)
+        self.buttonframe                    = ttk.Frame     (self.main_frame)
+        self.frame                          = ttk.Frame     (self.main_frame)
 
-        self.frame                          = ttk.Frame(self.main_frame)
-        # self.frame.columnconfigure          (0, weight=0)
-        self.frame.columnconfigure          (1, weight=1)
-        # self.frame.columnconfigure          (2, weight=0)
+
         self.namelabel                      = ttk.Label     (   self.titleframe, text = "Title:",justify='left')
         self.nametext                       = TweakedEntry  (   self.titleframe,font=('Arial',10))
 
@@ -92,24 +86,30 @@ class MainWindow:
     def on_changes_exec(self,event=None): # event info of no value
 
         if os.path.isfile(self.exectext.entry_text.get()):
-            self.filenametext.configure(state='enabled')
+            self.filenametext.configure     (state='enabled')
         else:
-            self.filenametext.configure(state='disabled')
+            self.filenametext.configure     (state='disabled')
 
     def on_changes_name(self,event=None): # event info of no value
         if self.filenametext.entry_text.get() != "":
-            self.okbutton.configure(state='enabled')
+            self.okbutton.configure         (state='enabled')
         else:
-            self.okbutton.configure(state='disabled')
+            self.okbutton.configure         (state='disabled')
 
 
     def do_geometry_management(self):
+
         # --- GRID
+        self.titleframe.columnconfigure     (1, weight=1)
+        self.buttonframe.columnconfigure    (0, weight=1)
+        self.buttonframe.columnconfigure    (1, weight=1)
+        self.frame.columnconfigure          (1, weight=1)
+
         self.namelabel.grid                 (row=0, column=0,sticky="we",           pady=3)
         self.nametext.grid                  (row=0, column=1,sticky="we",   padx=3, pady=3)
 
         self.filenamelabel.grid             (row=0, column=0,sticky="we")
-        self.filenametext.grid              (row=0, column=1,sticky="we",   padx=3          columnspan=2,)
+        self.filenametext.grid              (row=0, column=1,sticky="we",   padx=3,         columnspan=2,)
         # self.choose_filename_button.grid    (row=0, column=2)
 
         self.execlabel.grid                 (row=1, column=0,sticky="we",           pady=1)
@@ -138,9 +138,14 @@ class MainWindow:
 
     def click_ok(self):
         filename                            = self.filenametext.get()
-        if os.path.exists(self.exectext.get()):
+        if os.path.isfile(self.exectext.get()):
             parent_dir_of_executable            = os.path.dirname(os.path.realpath(self.exectext.get()))
-        if filename != "":
+
+            if not os.access(parent_dir_of_executable, os.W_OK):
+                self.root.after(10,lambda: messagebox.showerror(title="Desktop-file creator:",
+                                     message="Directory is not writable")
+                );
+                return
             filename = os.path.join(parent_dir_of_executable,f"{filename}.desktop")
             try:
                 with open(filename, "w") as my_file:
@@ -154,7 +159,7 @@ class MainWindow:
                                     message="Shortcut Created")
                 self.root.destroy               ()
             except:
-                self.after(10,lambda e: messagebox.showerror(title="Desktop-file creator:",
+                self.root.after(10,lambda: messagebox.showerror(title="Desktop-file creator:",
                                      message="SHORTCUT WAS NOT CREATED")
                 );
 
