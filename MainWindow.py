@@ -133,7 +133,11 @@ class MainWindow:
     #                                                           Functional functions
     def quit(self):
         print("Doin' some cleaning up...")
-        self.root.destroy()
+        if self.ctrl_c_timer != None:
+            print("This one time, killing time might stop a crime. Apologies to mr. Elliot Smith")
+            self.root.after_cancel          (self.ctrl_c_timer)
+            self.ctrl_c_timer               = None
+        self.root.destroy                   ()
         print("All done!")
 
     def click_ok(self):
