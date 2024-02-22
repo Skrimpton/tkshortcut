@@ -105,20 +105,21 @@ class MainWindow:
 
     def do_geometry_management(self):
         # --- GRID
-        self.namelabel.grid                 (row=0, column=0,sticky="we",pady=2)
-        self.nametext.grid                  (row=0, column=1,sticky="we",padx=3,pady=2)
+        self.namelabel.grid                 (row=0, column=0,sticky="we",           pady=3)
+        self.nametext.grid                  (row=0, column=1,sticky="we",   padx=3, pady=3)
 
         self.filenamelabel.grid             (row=0, column=0,sticky="we")
-        self.filenametext.grid              (row=0, column=1,columnspan=2,sticky="we",padx=3)
+        self.filenametext.grid              (row=0, column=1,columnspan=2,sticky="we",
+                                                                            padx=3)
         # self.choose_filename_button.grid    (row=0, column=2)
 
-        self.execlabel.grid                 (row=1, column=0,sticky="we",pady=3)
-        self.exectext.grid                  (row=1, column=1,sticky="we",padx=3,pady=3)
-        self.choosebutton.grid              (row=1, column=2,padx=3,pady=3)
+        self.execlabel.grid                 (row=1, column=0,sticky="we",           pady=1)
+        self.exectext.grid                  (row=1, column=1,sticky="we",   padx=3, pady=1)
+        self.choosebutton.grid              (row=1, column=2,               padx=3, pady=1)
 
         self.iconlabel.grid                 (row=2, column=0,sticky="we")
-        self.icontext.grid                  (row=2, column=1,sticky="we",padx=3)
-        self.choose_icon_button.grid        (row=2, column=2,padx=3)
+        self.icontext.grid                  (row=2, column=1,sticky="we",   padx=3)
+        self.choose_icon_button.grid        (row=2, column=2,               padx=3)
 
         self.okbutton.grid                  (row=0, column=0,sticky="we")
         self.cancelbutton.grid              (row=0, column=1,sticky="we")
@@ -126,7 +127,7 @@ class MainWindow:
         # --- PACK
         self.main_frame.pack                (fill='both',expand=1)
         self.titleframe.pack                (fill="x")
-        self.frame.pack                     (fill="x",pady=10)
+        self.frame.pack                     (fill="x",pady=5)
         self.buttonframe.pack               (fill="x",side='bottom')
 
     # ------------------------------------------------------------------------------
