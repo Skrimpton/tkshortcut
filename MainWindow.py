@@ -109,8 +109,7 @@ class MainWindow:
         self.nametext.grid                  (row=0, column=1,sticky="we",   padx=3, pady=3)
 
         self.filenamelabel.grid             (row=0, column=0,sticky="we")
-        self.filenametext.grid              (row=0, column=1,columnspan=2,
-                                                             sticky="we",   padx=3)
+        self.filenametext.grid              (row=0, column=1,sticky="we",   padx=3          columnspan=2,)
         # self.choose_filename_button.grid    (row=0, column=2)
 
         self.execlabel.grid                 (row=1, column=0,sticky="we",           pady=1)
@@ -159,6 +158,9 @@ class MainWindow:
                                      message="SHORTCUT WAS NOT CREATED")
                 );
 
+
+            # # file.close                        ()
+
     def choose_file(self):
         self.exectext.delete                (0, tk.END)
         self.exectext.insert                (0, fd.askopenfilename())
@@ -181,14 +183,14 @@ class MainWindow:
     # --- ### INFINTE LOOP ### ---------------------------------------------------------------------------------
     # DECLARE AND START THE TIMER THAT LETS < CTRL + C > IN THE TERMINAL CLOSE THE WINDOW
     #
-    def startCtrlCTimer(self): # <⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅ START "KEEP ACTIVE"-TIMER
+    def startCtrlCTimer(self): # <⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅    START "KEEP ACTIVE"-TIMER ON/OFF
                                                       #         I LIKE TO KEEP A 'self.'-REFERENCE OF '.after()'
         self.ctrl_c_timer = self.root.after (         #     THIS WAY WE CAN STOP THE TIMER AND AVOID ERRORS LIKE
             80,self.startCtrlCTimer                   #   "NO COMMAND FOUND", IF TIMER FIRES AFTER / WHILE DOING
         );                                            #                                    'self.root.destroy()'
 
 
-    def toggleCtrlCTimer(self): # <⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅ TOGGLE "KEEP ACTIVE"-TIMER ON/OFF
+    def toggleCtrlCTimer(self): # <⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅  TOGGLE "KEEP ACTIVE"-TIMER ON/OFF
         if self.ctrl_c_timer is None:
             self.startCtrlCTimer            ()
 
