@@ -9,20 +9,19 @@ C222                    = "#222222"
 C333                    = "#333333"
 C444                    = "#444444"
 Cba8                    = "#ba8404"
-C6f4                    = "#6f4e02"
-C4c3                    = "#4c3401"
-C4c4                    = "#4c4c00"
-Cffa                    = "#ffaa00"
+Cffa                    = "#ffaa00" # yellowish orange
 Cfff                    = "#ffffff"
-Cffff1c                 = "#ffff1c"
-Cffff00                 = "#ffff00"
-C55f                    = "#55ff7f"
-C313                    = "#313100"
-C4c4                    = "#4c4c00"
-C2e1                    = "#2e1581"
-C391                    = "#391d00"
-C002                    = "#002839"
-C013                    = "#01392d"
+Cff1c                   = "#ffff1c" # bright yellow, more pale/white
+Cff00                   = "#ffff00" # bright yellow, least pale/white
+C55f                    = "#55ff7f" # bright/pale green
+C313                    = "#313100" # poop
+C391                    = "#391d00" # also poop, but different
+C4c3                    = "#4c3401" # also poop, but a darker roast
+C6f4                    = "#6f4e02" # too-much-fiber diarrhoea, and you had 2 glasses of milk
+C4c4                    = "#4c4c00" # too-much-fiber diarrhoea, but only 1 glass
+C2e1                    = "#2e1581" # blue
+C002                    = "#002839" # dark greenish-blue / blueish-green
+C013                    = "#01392d" # green that isn't trying too hard and is a little bit depressed
 C3f4                    = "#3f452a" # GREENISH BROWNISH
 
 WINDOW_COLOR            = C000 # BLACK
@@ -40,7 +39,7 @@ class Styler:
         # self.style.theme_use          ("clam")                            # use "clam"-theme
         # self.style.theme_use          ("classic")                         # use "classic"-theme
         # self.style.theme_use          ("vista")                           # use "vista"-theme (not available on linux)
-        self._style_entry               ()                                  
+        self._style_entry               ()
 
     def _style_entry(self):
 
@@ -61,9 +60,9 @@ class Styler:
         self.style.map(         'TEntry',
 
             foreground          = [ ('!focus',ENTRY_UNFOCUSED), ('focus',ENTRY_FOCUSED)    ],
-            background          = [ ('disabled',C333),('focus',C3f4), ('!focus',WINDOW_COLOR)    ],
+            background          = [ ('disabled',C333),('focus',C181), ('!focus',WINDOW_COLOR)    ],
             bordercolor         = [ ('disabled',C444),('focus',C444), ('!focus',WINDOW_COLOR)    ],
-            insertcolor         = [ ('focus',Cfff),('!focus','#ffff1c')    ],
+            insertcolor         = [ ('focus',Cfff),('!focus',Cff1c)    ],
             fieldbackground     = [ ('disabled',C333),('focus',WINDOW_COLOR),('!focus',WINDOW_COLOR)    ],
         );
 
