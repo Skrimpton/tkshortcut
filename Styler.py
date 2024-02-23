@@ -35,6 +35,8 @@ class Styler:
 
         self.style=ttk.Style(self.root)
         self.style.theme_use            ("alt")
+        self.style.theme_create("user_theme", parent="clam")
+        # style.theme_use("user_theme")
 
         # self.style.theme_use          ("clam")                            # use "clam"-theme
         # self.style.theme_use          ("classic")                         # use "classic"-theme
@@ -56,7 +58,7 @@ class Styler:
             ]
         );
 
-        self.style.map(         'TEntry',
+        self.style.map(         'C.TEntry',
 
             foreground          = [ ('!focus',ENTRY_UNFOCUSED), ('focus',ENTRY_FOCUSED)    ],
             background          = [ ('disabled',C333),('focus',C181), ('!focus',WINDOW_COLOR)    ],
@@ -65,21 +67,21 @@ class Styler:
             fieldbackground     = [ ('disabled',C333),('focus',WINDOW_COLOR),('!focus',WINDOW_COLOR)    ],
         );
 
-        self.style.map(         'TLabel',
+        self.style.map(         'C.TLabel',
             background          = [ ('disabled',WINDOW_COLOR),('active',C101), ('!active',WINDOW_COLOR) ],
             foreground          = [ ('disabled',C101),('!active',Cfff),('active',Cffa)    ],
         );
-        self.style.map(         'TButton',
+        self.style.map(         'C.TButton',
             foreground          = [ ('disabled',C101),('!active',Cfff),('active',Cffa)    ],
             background          = [ ('disabled',C333),('active',C101), ('!active',WINDOW_COLOR) ],
         );
 
-        self.style.configure(   'TLabel',
+        self.style.configure(   'C.TLabel',
             background=WINDOW_COLOR,
             foreground=Cfff,
 
         );
-        self.style.configure(   'TFrame',
+        self.style.configure(   'C.TFrame',
             background=WINDOW_COLOR,
         );
 
