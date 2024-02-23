@@ -1,4 +1,5 @@
-Based on tkshortcut by Roger Savage:
+# Based on tkshortcut by Roger Savage:
+#### Thanks again for a fun project and being a real cool guy about the fork :)
 ---
 
 ### [tkshortcut](https://github.com/rogersavage/tkshortcut)
@@ -36,4 +37,3 @@ This is the result of two hours of work after starting my first Tkinter tutorial
 4. Add edit-functionality to existing files and autofill of fields
    - Maybe provide a collection of desktop files and instructions on how to add context-menu option in different DE's?  
 5. Learn how to make right-click-menu items in other DE's than KDE.
- 
