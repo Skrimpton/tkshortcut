@@ -26,14 +26,14 @@ This is the result of two hours of work after starting my first Tkinter tutorial
     - Toggles selection of either the closest space-enclosed text (single letter or word) to the cursor<br>( if the cursor is touching text )
     - Toggles select all text if there is selection present
 - Some slight differences in geometry management
-- Hardcoded black color-scheme (TODO 1)
+- Hardcoded black color-scheme: NOW WITH TOGGLE <Alt+Shift+C> (TODO 1)
 - Autosuggestion of filename for .desktop file based on executable
 - Creation of the desktop file in the same directory as the selected executable (TODO 2)
 - Some checks and balances for the selected executable
 - Poop jokes hidden in the source-code
 
 ### TODO:
-1. Add toggle on/off, color-scheme selector, or something like that
+1. ~~Add toggle on/off~~, color-scheme selector, or something like that
 2. Select output directory
 3. Add (way) more entry-rows
 4. Add edit-functionality to existing files and autofill of fields
