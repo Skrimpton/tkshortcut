@@ -25,7 +25,7 @@ class MainWindow:
     def __init__(self): #                   ### BEGIN ###
 
         self.ctrl_c_timer                   = None
-
+        self.style_toggled                  = False
         # --- Set root
         self.root                           = tk.Tk()
         self.styler                         = Styler(self.root) # comment out this to remove styling
@@ -36,15 +36,15 @@ class MainWindow:
         # ---
         self.declareUi                      ()
         self.do_geometry_management         ()
-
+        self.root.bind                  ('<Alt-Shift-C>',self.toggle_style)
     # ------------------------------------------------------------------------------
     #                                                         Construction functions
     def declareUi(self):
-        self.main_frame                     = ttk.Frame     (self.root)
-        self.titleframe                     = ttk.Frame     (self.main_frame)
+        self.main_frame                     = ttk.Frame     (   self.root)
+        self.titleframe                     = ttk.Frame     (   self.main_frame)
 
-        self.buttonframe                    = ttk.Frame     (self.main_frame)
-        self.frame                          = ttk.Frame     (self.main_frame)
+        self.buttonframe                    = ttk.Frame     (   self.main_frame)
+        self.frame                          = ttk.Frame     (   self.main_frame)
 
         self.namelabel                      = ttk.Label     (   self.titleframe, text = "Title:",justify='left')
         self.nametext                       = TweakedEntry  (   self.titleframe,font=('Arial',10))
@@ -80,6 +80,62 @@ class MainWindow:
         self.cancelbutton                   = ttk.Button    (   self.buttonframe, text="Cancel",
                                                                 command = self.quit
                                             );
+    def toggle_style(self,_):
+        self.style_toggled = not self.style_toggled
+        if self.style_toggled:
+            # ENTRIES
+            self.main_frame             .configure(style='C.TFrame')
+            self.titleframe             .configure(style='C.TFrame')
+            self.buttonframe            .configure(style='C.TFrame')
+            self.frame                  .configure(style='C.TFrame')
+            self.choose_icon_button     .configure(style='C.TButton')
+            self.choosebutton           .configure(style='C.TButton')
+            self.okbutton               .configure(style='C.TButton')
+            self.cancelbutton           .configure(style='C.TButton')
+            self.choose_filename_button .configure(style='C.TButton')
+            self.namelabel              .configure(style='C.TLabel')
+            self.filenamelabel          .configure(style='C.TLabel')
+            self.execlabel              .configure(style='C.TLabel')
+            self.iconlabel              .configure(style='C.TLabel')
+            self.filenametext           .configure(style='C.TEntry')
+            self.nametext               .configure(style='C.TEntry')
+            self.exectext               .configure(style='C.TEntry')
+            self.icontext               .configure(style='C.TEntry')
+            # FRAMES
+            # LABELS
+            # BUTTONS
+
+        else:
+            # ENTRIES
+            self.main_frame             .configure(style='TFrame')
+            self.titleframe             .configure(style='TFrame')
+            self.buttonframe            .configure(style='TFrame')
+            self.frame                  .configure(style='TFrame')
+            self.choose_icon_button     .configure(style='TButton')
+            self.choosebutton           .configure(style='TButton')
+            self.okbutton               .configure(style='TButton')
+            self.cancelbutton           .configure(style='TButton')
+            self.choose_filename_button .configure(style='TButton')
+            self.namelabel              .configure(style='TLabel')
+            self.filenamelabel          .configure(style='TLabel')
+            self.execlabel              .configure(style='TLabel')
+            self.iconlabel              .configure(style='TLabel')
+            self.filenametext           .configure(style='TEntry')
+            self.nametext               .configure(style='TEntry')
+            self.exectext               .configure(style='TEntry')
+            self.icontext               .configure(style='TEntry')
+            # FRAMES
+            # LABELS
+            # BUTTONS
+
+
+
+
+
+
+
+
+
 
 
     def do_geometry_management(self):
@@ -142,7 +198,7 @@ class MainWindow:
     def quit(self):
         print("Doin' some cleaning up...")
         if self.ctrl_c_timer != None:
-            print("This one time, killing time might stop a crime. Apologies to mr. Elliot Smith")
+            print("This one time, killing time might stop a crime. Apologies to mr. Elliott Smith")
             self.root.after_cancel          (self.ctrl_c_timer)
             self.ctrl_c_timer               = None
         self.root.destroy                   ()
