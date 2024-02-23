@@ -17,7 +17,7 @@ This is the result of two hours of work after starting my first Tkinter tutorial
 
 ---
 
-### Changelog / Additions / Differences:
+### Additions / Differences:
 - Class-based approach
 - Entry-fields:
   - Undo/Redo functionality added
