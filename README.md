@@ -18,17 +18,19 @@ This is the result of two hours of work after starting my first Tkinter tutorial
 ---
 
 ### Changelog / Additions / Differences:
-- class-based approach
-- entry-fields:
-  - undo/redo functionality added
-  - entry-fields are scrollable
-  - <Shift+Up> / <Shift+Down> toggles selection of either the closest word to the cursor or all text (if entry has selection present)
-- some slight differences in geometry management
-- hardcoded black color-scheme (TODO 1)
-- autosuggestion of filename for .desktop file based on executable
-- creation of the desktop file in the same directory as the selected executable (TODO 2)
-- some checks and balances for the selected executable
-- poop jokes hidden in the source-code
+- Class-based approach
+- Entry-fields:
+  - Undo/Redo functionality added
+  - Entry-fields are scrollable
+  - <Shift+Up> / <Shift+Down>
+    - Toggles selection of either the closest space-enclosed text (single letter or word) to the cursor<br>( if the cursor is touching text )
+    - Toggles select all text if there is selection present
+- Some slight differences in geometry management
+- Hardcoded black color-scheme (TODO 1)
+- Autosuggestion of filename for .desktop file based on executable
+- Creation of the desktop file in the same directory as the selected executable (TODO 2)
+- Some checks and balances for the selected executable
+- Poop jokes hidden in the source-code
 
 ### TODO:
 1. Add toggle on/off, color-scheme selector, or something like that
