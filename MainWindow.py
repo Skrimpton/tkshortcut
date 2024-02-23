@@ -82,8 +82,9 @@ class MainWindow:
                                             );
     def toggle_style(self,_):
         self.style_toggled = not self.style_toggled
+
         if self.style_toggled:
-            # ENTRIES
+            
             self.main_frame             .configure(style='C.TFrame')
             self.titleframe             .configure(style='C.TFrame')
             self.buttonframe            .configure(style='C.TFrame')
@@ -101,9 +102,6 @@ class MainWindow:
             self.nametext               .configure(style='C.TEntry')
             self.exectext               .configure(style='C.TEntry')
             self.icontext               .configure(style='C.TEntry')
-            # FRAMES
-            # LABELS
-            # BUTTONS
 
         else:
             # ENTRIES
@@ -124,19 +122,6 @@ class MainWindow:
             self.nametext               .configure(style='TEntry')
             self.exectext               .configure(style='TEntry')
             self.icontext               .configure(style='TEntry')
-            # FRAMES
-            # LABELS
-            # BUTTONS
-
-
-
-
-
-
-
-
-
-
 
     def do_geometry_management(self):
 
