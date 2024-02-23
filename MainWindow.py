@@ -7,13 +7,13 @@ import os,sys, signal
 from TweakedEntry import CEntry as TweakedEntry
 from Styler import  Styler
 
-# HIGHLIGHTBACKGROUND     =
 def keyboard_interrupt_handler(sig, frame):
     print(":: WINDOW :: You pressed Ctrl+C! Exiting...")
     if __name__ == "__main__":
         app.quit()
     else:
         MainWindow().quit()
+
     sys.exit(0)
 
 class MainWindow:
@@ -30,7 +30,7 @@ class MainWindow:
         self.root                           = tk.Tk()
         self.styler                         = Styler(self.root) # comment out this to remove styling
         self.root.title                     ("Create Desktop Shortcut")
-
+        self.root.minsize                   (280,160)
         # --- Hook up x-button to quit-function. Not needed, but maybe a nifty snippet.
         self.root.protocol                  ( "WM_DELETE_WINDOW", self.quit );
         # ---
@@ -84,7 +84,7 @@ class MainWindow:
         self.style_toggled = not self.style_toggled
 
         if self.style_toggled:
-            
+
             self.main_frame             .configure(style='C.TFrame')
             self.titleframe             .configure(style='C.TFrame')
             self.buttonframe            .configure(style='C.TFrame')
@@ -135,7 +135,7 @@ class MainWindow:
 
         self.filenamelabel.grid             (row=0, column=0,sticky="we")
         self.filenametext.grid              (row=0, column=1,sticky="we",   padx=3,         columnspan=2,)
-        # self.choose_filename_button.grid    (row=0, column=2)
+
 
         self.execlabel.grid                 (row=1, column=0,sticky="we",           pady=1)
         self.exectext.grid                  (row=1, column=1,sticky="we",   padx=3, pady=1)
@@ -198,7 +198,9 @@ class MainWindow:
                                      message="Directory is not writable")
                 );
                 return
+
             filename = os.path.join(parent_dir_of_executable,f"{filename}.desktop")
+
             try:
                 with open(filename, "w") as my_file:
 
@@ -211,6 +213,7 @@ class MainWindow:
                                                 message="Shortcut Created")
                 print(msg)
                 self.root.destroy               ()
+
             except:
                 self.root.after(10,lambda: messagebox.showerror(title="Desktop-file creator:",
                                      message="SHORTCUT WAS NOT CREATED")
