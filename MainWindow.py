@@ -104,7 +104,6 @@ class MainWindow:
             self.icontext               .configure(style='C.TEntry')
 
         else:
-            # ENTRIES
             self.main_frame             .configure(style='TFrame')
             self.titleframe             .configure(style='TFrame')
             self.buttonframe            .configure(style='TFrame')
