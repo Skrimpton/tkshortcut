@@ -40,22 +40,20 @@ class MainWindow:
     # ------------------------------------------------------------------------------
     #                                                         Construction functions
     def declareUi(self):
-        self.main_frame                     = ttk.Frame       (self.root)
-        self.titleframe                     = ttk.Frame       (self.main_frame)
+        self.main_frame                     = ttk.Frame     (self.root)
+        self.titleframe                     = ttk.Frame     (self.main_frame)
 
         self.buttonframe                    = ttk.Frame     (self.main_frame)
         self.frame                          = ttk.Frame     (self.main_frame)
-
 
         self.namelabel                      = ttk.Label     (   self.titleframe, text = "Title:",justify='left')
         self.nametext                       = TweakedEntry  (   self.titleframe,font=('Arial',10))
 
 
-        self.filenamelabel                  = ttk.Label     (   self.frame, text = "Filename *:",justify='left')
+        self.filenamelabel                  = ttk.Label     (   self.frame, text = "Filename *:",justify='left',state='disabled')
         self.filenametext                   = TweakedEntry  (   self.frame,font=('Arial',10),enabled=False)
         self.filenametext.bind              ('<<FieldChanged>>',self.on_changes_name)
 
-        # self.filenametext.insert            (0, )
         self.choose_filename_button         = ttk.Button    (   self.frame, text = "Choose",
                                                                 command    = self.choose_filename
                                             );
@@ -63,7 +61,7 @@ class MainWindow:
         self.execlabel                      = ttk.Label     (   self.frame, text = "Path to Executable *:",justify='left')
         self.exectext                       = TweakedEntry  (   self.frame,font=('Arial',10))
         self.exectext.bind                  ('<<FieldChanged>>',self.on_changes_exec)
-        # self.exectext.insert                (0, "Path to Executable")
+
 
         self.iconlabel                      = ttk.Label     (   self.frame, text = "Icon:")
         self.icontext                       = TweakedEntry  (   self.frame,font=('Arial',10))
@@ -82,19 +80,6 @@ class MainWindow:
         self.cancelbutton                   = ttk.Button    (   self.buttonframe, text="Cancel",
                                                                 command = self.quit
                                             );
-
-    def on_changes_exec(self,event=None): # event info of no value
-
-        if os.path.isfile(self.exectext.entry_text.get()):
-            self.filenametext.configure     (state='enabled')
-        else:
-            self.filenametext.configure     (state='disabled')
-
-    def on_changes_name(self,event=None): # event info of no value
-        if self.filenametext.entry_text.get() != "":
-            self.okbutton.configure         (state='enabled')
-        else:
-            self.okbutton.configure         (state='disabled')
 
 
     def do_geometry_management(self):
@@ -131,6 +116,29 @@ class MainWindow:
 
     # ------------------------------------------------------------------------------
     #                                                           Functional functions
+
+
+    def on_changes_exec(self,event=None): # event info of no value
+
+        if os.path.isfile(self.exectext.entry_text.get()):
+            self.filenametext.configure     (state='enabled')
+            self.filenamelabel.configure    (state='enabled')
+            content = os.path.basename      (self.exectext.entry_text.get())
+            filename_minus_extension = os.path.splitext(content)[0]
+            content = f"{filename_minus_extension}.desktop"
+            self.filenametext.delete        (0, tk.END)
+            self.filenametext.insert        (0, content)
+        else:
+            self.filenametext.configure     (state='disabled')
+            self.filenamelabel.configure    (state='disabled')
+
+    def on_changes_name(self,event=None): # event info of no value
+        if self.filenametext.entry_text.get() != "":
+            self.okbutton.configure         (state='enabled')
+        else:
+            self.okbutton.configure         (state='disabled')
+
+
     def quit(self):
         print("Doin' some cleaning up...")
         if self.ctrl_c_timer != None:
@@ -158,17 +166,16 @@ class MainWindow:
                     my_file.write               ("Name=" + self.nametext.get() + "\n")
                     my_file.write               ("Exec=" + self.exectext.get() + "\n")
                     my_file.write               ("Icon=" + self.icontext.get() + "\n")
-                # self.after(10,lambda e: messagebox.shoinfo(message="Shortcut Created"))
-                messagebox.showinfo(title="Desktop-file creator:",
-                                    message="Shortcut Created")
+
+                msg = messagebox.showinfo       (title="Desktop-file creator:",
+                                                message="Shortcut Created")
+                print(msg)
                 self.root.destroy               ()
             except:
                 self.root.after(10,lambda: messagebox.showerror(title="Desktop-file creator:",
                                      message="SHORTCUT WAS NOT CREATED")
                 );
 
-
-            # # file.close                        ()
 
     def choose_file(self):
         self.exectext.delete                (0, tk.END)
@@ -190,7 +197,7 @@ class MainWindow:
 
 
     # --- ### INFINTE LOOP ### ---------------------------------------------------------------------------------
-    # DECLARE AND START THE TIMER THAT LETS < CTRL + C > IN THE TERMINAL CLOSE THE WINDOW
+    # DECLARE AND START THE TIMER THAT LETS <CTRL+C> IN THE TERMINAL CLOSE THE WINDOW
     #
     def startCtrlCTimer(self): # <⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅               START <CTRL+C>-TIMER
                                                       #         I LIKE TO KEEP A 'self.'-REFERENCE OF '.after()'
@@ -199,7 +206,7 @@ class MainWindow:
         );                                            #                                    'self.root.destroy()'
 
 
-    def toggleCtrlCTimer(self): # <⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅  TOGGLE "KEEP ACTIVE"-TIMER ON/OFF
+    def toggleCtrlCTimer(self): # <⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅       TOGGLE <CTRL+C>-TIMER ON/OFF
         if self.ctrl_c_timer is None:
             self.startCtrlCTimer            ()
 
@@ -207,6 +214,7 @@ class MainWindow:
             self.root.after_cancel          (self.ctrl_c_timer)
             self.ctrl_c_timer               = None
 
+    # --- END INFINTE LOOP END ---------------------------------------------------------------------------------
 
 
 if __name__ == "__main__":
