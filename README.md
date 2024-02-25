@@ -34,7 +34,7 @@ This is the result of two hours of work after starting my first Tkinter tutorial
 
 ### TODO:
 1. ~~Add toggle on/off~~, color-scheme selector, or something like that
-2. Select output directory
+2. Select output directory : Add actual functionality (just a dummy for now)
 3. Add (way) more entry-rows
 4. Add edit-functionality to existing files and autofill of fields
    - Maybe provide a collection of desktop files and instructions on how to add context-menu option in different DE's?  
