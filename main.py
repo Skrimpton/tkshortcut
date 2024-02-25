@@ -1,6 +1,8 @@
+#!/bin/env python3
+
 import sys
 try:    import tkinter as tk
-except: print("There is an issue with the tkinter module. Exiting"),sys.exit(1)
+except: print("no tkinter :("),sys.exit(1)
 else:   from MainWindow import MainWindow
 # --------------------------------------------------------------------------
 #                                                  MAKE AND SPAWN NEW WINDOW
