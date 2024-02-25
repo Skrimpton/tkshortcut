@@ -2,6 +2,8 @@
 
 import  re, sys, signal
 
+# from os.path import isfile
+
 import  tkinter     as      tk
 from    tkinter     import  ttk
 
@@ -9,44 +11,52 @@ from    tkinter     import  ttk
 from collections import deque
 
 
-class CEntry(ttk.Entry):
+class CEntry(ttk.Entry): # https://stackoverflow.com/a/75367456
+    def __init__(self, parent=None, root=None, font=None, key=None,enabled=True, *args, **kwargs):
 
-    def __init__(self, parent=None, font=None, enabled=True, *args, **kwargs):
         ttk.Entry.__init__(self, parent, *args, **kwargs)
+        self.key                    = key
+        self.parent                 = parent
+        self.root                   = root
+        self.dir_select             = False
+        self.undo_redo_reopen       = False
+        self._undo_stack            = deque(maxlen=100)
+        self._redo_stack            = deque(maxlen=100)
+        # self.entry_text             = parent.entry_text
+        self.changes                = [""]
+        self.steps                  = int()
+        self.keep_active_timer      = None
 
-        self.parent = parent
-        self._undo_stack = deque(maxlen=100)
-        self._redo_stack = deque(maxlen=100)
-        # self.entry_text = parent.entry_text
-        self.changes = [""]
-        self.steps = int()
-        self.keep_active_timer = None
 
-        self.entry_text                 =   tk.StringVar    ( );
+        self.entry_text         =   tk.StringVar    ( );
         if font == None:
-            _font = ("Arial",18)
+            _font   = ("Arial",18)
         else:
-            _font = font
+            _font   = font
         if enabled:
-            _state = "enabled"
+            _state  = "enabled"
         else:
-            _state = "disabled"
+            _state  = "disabled"
         self.configure(
             font                = _font,
             text                = self.entry_text,
-            state               = _state
-            # highlightbackground = ENTRY_HIGH_BG,
-            # highlightcolor      = ENTRY_HIGH_COLOR,
-            # disabledbackground  = WINDOW_COLOR,
-            # insertbackground    = FOREGROUND_ENTRY,
-            # background          = WINDOW_COLOR,
-            # foreground          = "#ffaa00",
-            # foreground          = FOREGROUND_ENTRY,
-            # selectforeground    = FOREGROUND_ENTRY,
-            # selectbackground    = C333,
-            # borderwidth         = '0',
+            state               = _state,
+            # highlightbackground = ,
+            # highlightcolor      = ,
+            # disabledbackground  = ,
+            # insertbackground    = ,
+            # background          = ,
+            # foreground          = ,
+            # foreground          = ,
+            # selectforeground    = ,
+            # selectbackground    = ,
+            # borderwidth         = ,
         );
         # self.element_options(self.context_menu)
+        self.makeMenu()
+        self.set_bindings()
+
+    def makeMenu(self):
         self.context_menu = tk.Menu(self,
             tearoff=0,
             bg="#000000",
@@ -56,26 +66,15 @@ class CEntry(ttk.Entry):
             font=('',11),
         );
         # print(self.context_menu.winfo_class())
-        self.context_menu.add_command(label="Cut")
-        self.context_menu.add_command(label="Copy")
-        self.context_menu.add_command(label="Paste")
-        self.context_menu.add_command(label="Select all")
-        self.set_bindings()
-        # self.pack(fill='both')
-        # self.after(20, self.toggleKeepActiveTimer)
+        self.context_menu.add_command(label="Cut",command=lambda: self.event_generate("<<Cut>>"))
+        self.context_menu.add_command(label="Copy",command=lambda: self.event_generate("<<Copy>>"))
+        self.context_menu.add_command(label="Paste",command=lambda: self.event_generate("<<Paste>>"))
+        self.context_menu.add_command(label="Delete",command=lambda: self.delete_selcted())
+        self.context_menu.add_command(label="Select all",command=lambda: self._select_all(""))
+        self.context_menu.add_command(label="Clear",command=lambda: self.delete(0, tk.END))
+        self.context_menu.add_command(label="Undo")
+        self.context_menu.add_command(label="Redo")
 
-    #     self._xview = {}
-    #     self.watch_xview(self)
-    #     self.bind("<<XviewChanged>>", lambda e: print(e))
-    #
-    # def watch_xview(self, widget):
-    #     xview = widget.xview()
-    #     print(xview)
-    #     prev_xview = self._xview.get(widget, "")
-    #     self._xview[widget] = xview
-    #     if xview != prev_xview:
-    #         widget.event_generate("<<XviewChanged>>")
-    #     widget.after(100, self.watch_xview, widget)
 
     def set_bindings(self):
         self.bind("<FocusOut>",self.handlePopupClose)
@@ -85,15 +84,17 @@ class CEntry(ttk.Entry):
         self.bind("<Button-3>", self.popup)
 
         # self.bind("<Motion>",self.onWheel)
-
+        self.bind   ('<<Paste>>',           self.paste)
+        self.bind   ('<FocusOut>',          self.handleFocusOut)
+        self.bind   ("<Return>",            self._return_pressed)
         self.bind   ("<Shift-Up>",          self._shift_up_down)
         self.bind   ("<Shift-Down>",        self._shift_up_down)
-        # self.bind   ("<Alt-Left>",          lambda e:self.scrollHandler(1))
+        self.bind   ("<Alt-Shift-slash>",   self.toggle_dir_select)
+        self.bind   ("<Alt-Shift-R>",       self.toggle_undo_redo_reopen)
         self.bind   ("<Alt-Left>",          lambda e:self.scrollHandler(2))
         self.bind   ("<Alt-Right>",         lambda e:self.scrollHandler(1))
-        # self.bind   ("<Alt-Right>",         lambda e:self.scrollHandler(2))
-        self.bind   ("<Control-A>",         self.select_all)
-        self.bind   ("<Control-a>",         self.select_all)
+        self.bind   ("<Control-A>",         self._select_all)
+        self.bind   ("<Control-a>",         self._select_all)
 
         self.bind   ("<Control-z>",         self.undo)
         self.bind   ("<Control-Z>",         self.undo)
@@ -103,15 +104,36 @@ class CEntry(ttk.Entry):
         self.bind   ("<Control-Shift-z>",   self.redo)
         self.bind   ("<Control-Shift-Z>",   self.redo)
 
-        # self.bind   ("<Key>", self.add_changes)
         self.trace_id = self.entry_text.trace("w", self.on_changes)
         self.bind   ('<Control-BackSpace>', self.entry_ctrl_bs)
+
+    def toggle_undo_redo_reopen(self,e):
+        self.undo_redo_reopen = not self.undo_redo_reopen
+
+    def toggle_dir_select(self,e):
+
+        self.event_generate('<<SelectModeChanged>>')
+        print("select mode (dir):",self.dir_select)
+
+        self.dir_select = not self.dir_select
+        if self.select_present():
+            self.select_range(0,0)
+
+    def _return_pressed(self,e):
+        self.event_generate('<<ReturnPressed>>')
+
+    def handleFocusOut(self,e=None):
+        self.select_range(0,0)
+        self.context_menu.unpost()
 
     def handlePopupClose(self,e=None):
         self.context_menu.unpost()
 
     def _wordAtIndex(self,string,index):
-        sp = string.split(' ')
+        if self.dir_select == True:
+            sp = string.split('/')
+        else:
+            sp = string.split(' ')
         total_len = 0
         for word in sp:
             total_len += (len(word) + 1)    #The '+1' accounts for the underscore
@@ -119,22 +141,19 @@ class CEntry(ttk.Entry):
                 result = word
                 break
 
-        # _s = string.index(result)
-
         end_idx         = self.index(tk.INSERT)
-        start_idx       = (self.get().rfind(" ", None, end_idx)+1) # magic word-boundary finder <3
+        if self.dir_select == True:
+            start_idx       = (self.get().rfind("/", None, end_idx)+1) # magic word-boundary finder <3
+        else:
+            start_idx       = (self.get().rfind(" ", None, end_idx)+1) # magic word-boundary finder <3
         _s              = start_idx
         _e = _s + len(result)
         # return (_s,_e,result)
         return (_s,_e)
 
-    def select_all(self,e):
-        # print(self._wordAtIndex(e.widget.get(),self.index(tk.INSERT)))
+    def _select_all(self,e):
         if self.select_present():
-            # print(e.widget.get())
-            # print(self.selection_get()) # get the selected text
-            # print(e.widget.get()) # get the selected text
-            if self.selection_get() == e.widget.get():
+            if self.selection_get() == self.get():
                 self.select_range(0,0)
             else:
                 self.select_range(0,tk.END)
@@ -146,11 +165,8 @@ class CEntry(ttk.Entry):
 
     def _shift_up_down(self,e):
         index_pack = self._wordAtIndex(e.widget.get(),self.index(tk.INSERT))
-        # print(self._wordAtIndex(e.widget.get(),self.index(tk.INSERT)))
+
         if self.select_present():
-            # print(e.widget.get())
-            # print(self.selection_get()) # get the selected text
-            # print(e.widget.get()) # get the selected text
             if self.selection_get() == e.widget.get():
                 self.select_range(index_pack[0],index_pack[1])
                 # self.select_range(0,0)
@@ -158,9 +174,7 @@ class CEntry(ttk.Entry):
                 self.select_range(0,tk.END)
 
         else:
-            # print("GETTING INDEX PACK")
             self.select_range(index_pack[0],index_pack[1])
-            # self.select_range(0,tk.END)
         return "break"
 
     def onMouse(self,e):
@@ -182,7 +196,6 @@ class CEntry(ttk.Entry):
             self.xview_scroll(2, "units")
         return "break"
 
-
     def entry_ctrl_bs(self, event):
         # print()
         if not self.select_present():
@@ -191,31 +204,74 @@ class CEntry(ttk.Entry):
             if end_idx != start_idx:
                 self.selection_range(start_idx, end_idx)
 
+    def paste(self,e):
+        self.on_changes()
+
 
     def popup(self, event):
-        self.context_menu.entryconfigure("Cut", command=lambda: self.event_generate("<<Cut>>"))
-        self.context_menu.entryconfigure("Copy", command=lambda: self.event_generate("<<Copy>>"))
-        self.context_menu.entryconfigure("Paste", command=lambda: self.event_generate("<<Paste>>"))
-        self.context_menu.entryconfigure("Select all", command=lambda: self.select_all(""))
+        print(event)
+        self.focus_set()
+        # self.context_menu.entryconfigure( "Paste", command=lambda: self.event_generate("<<Paste>>"),state="normal")
+
+        if self.select_present():
+            self.context_menu.entryconfigure("Cut", state="normal")
+            self.context_menu.entryconfigure("Copy", state="normal")
+            self.context_menu.entryconfigure("Delete", state="normal")
+        else:
+            self.context_menu.entryconfigure    ("Cut", state="disabled")
+            self.context_menu.entryconfigure    ("Copy", state="disabled")
+            self.context_menu.entryconfigure    ("Delete", state="disabled")
+            self.context_menu.entryconfigure    ("Select all", state="disabled")
+
+        if not self._undo_stack or len(self._undo_stack) == 1:
+            self.context_menu.entryconfigure    ("Undo",state="disabled",   command=lambda e=event: self.undo_menu(e))
+        else:
+            self.context_menu.entryconfigure    ("Undo",state="normal",     command=lambda e=event: self.undo_menu(e))
+        if not self._redo_stack:
+            self.context_menu.entryconfigure    ("Redo",state="disabled",   command=lambda e=event: self.redo_menu(e))
+        else:
+            self.context_menu.entryconfigure    ("Redo",state="normal",     command=lambda e=event: self.redo_menu(e))
+
+        if len(event.widget.get()) == 0:
+            self.context_menu.entryconfigure    ("Clear",state="disabled")
+        else:
+            self.context_menu.entryconfigure    ("Clear",state="normal")
+
+        if len(event.widget.get()) == 0 or (self.select_present() and self.selection_get() == event.widget.get()) :
+            self.context_menu.entryconfigure    ("Select all",state="disabled")
+        else:
+            self.context_menu.entryconfigure    ("Select all",state="normal")
+
+
+
         self.context_menu.post(event.x_root, event.y_root)
         # self.context_menu.focus_set()
     #
+    def delete_selcted(self):
+        sel_start   = self.index("sel.first")
+        sel_end     = self.index("sel.last")
+        self.delete(sel_start, sel_end)
+
+
+    # --------------------------------------------------------------------------
+    #                                       https://stackoverflow.com/a/75367456
+
+    def undo_menu(self, event=None):  # noqa
+        self.undo()
+        if self.undo_redo_reopen:
+            self.after(100,
+                lambda e=event: self.popup(e)
+            )
+
+    def redo_menu(self, event=None):  # noqa
+        self.redo()
+        if self.undo_redo_reopen:
+            self.after(100,
+                lambda e=event: self.popup(e)
+            )
 
     def undo(self, event=None):  # noqa
-        # print(len(self._undo_stack))
-        # print(self.trace_id)
         if len(self._undo_stack) <= 1:
-            # self.entry_text.trace_vdelete("w", self.trace_id)
-            # if len(self._undo_stack) > 0:
-            #     content = self._undo_stack.pop()
-            # # self._redo_stack.append(content)
-            #     content = ""
-            #     self.entry_text.trace_vdelete("w", self.trace_id)
-            #     self.delete(0, tk.END)
-            #     self.insert(0, content)
-            #
-            #     self.event_generate('<<FieldChanged>>')
-            #     self.trace_id = self.entry_text.trace("w", self.on_changes)
             return "break"
         else:
             old_view =  self.xview()
