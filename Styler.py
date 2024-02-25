@@ -36,6 +36,10 @@ class Styler:
         self.style=ttk.Style(self.root)
         self.style.theme_use            ("alt")
         self.style.theme_create("user_theme", parent="clam")
+        self.stylegroup_frames  = []
+        self.stylegroup_buttons = []
+        self.stylegroup_entries = []
+        self.stylegroup_labels  = []
         # style.theme_use("user_theme")
 
         # self.style.theme_use          ("clam")                            # use "clam"-theme
