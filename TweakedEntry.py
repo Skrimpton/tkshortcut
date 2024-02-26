@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/bin/env python
 
 import  re, sys, signal
 
@@ -6,16 +6,13 @@ import  re, sys, signal
 
 import  tkinter     as      tk
 from    tkinter     import  ttk
-
-
-from collections import deque
+from    collections import  deque
 
 
 class CEntry(ttk.Entry): # https://stackoverflow.com/a/75367456
-    def __init__(self, parent=None, root=None, font=None, key=None,enabled=True, *args, **kwargs):
+    def __init__(self, parent=None, root=None, font=None ,enabled=True, *args, **kwargs):
 
         ttk.Entry.__init__(self, parent, *args, **kwargs)
-        self.key                    = key
         self.parent                 = parent
         self.root                   = root
         self.dir_select             = False
@@ -70,11 +67,10 @@ class CEntry(ttk.Entry): # https://stackoverflow.com/a/75367456
         self.context_menu.add_command(label="Copy",command=lambda: self.event_generate("<<Copy>>"))
         self.context_menu.add_command(label="Paste",command=lambda: self.event_generate("<<Paste>>"))
         self.context_menu.add_command(label="Delete",command=lambda: self.delete_selcted())
-        self.context_menu.add_command(label="Select all",command=lambda: self._select_all(""))
+        self.context_menu.add_command(label="Select all",command=self._select_all_menu)
         self.context_menu.add_command(label="Clear",command=lambda: self.delete(0, tk.END))
         self.context_menu.add_command(label="Undo")
         self.context_menu.add_command(label="Redo")
-
 
     def set_bindings(self):
         self.bind("<FocusOut>",self.handlePopupClose)
@@ -91,8 +87,8 @@ class CEntry(ttk.Entry): # https://stackoverflow.com/a/75367456
         self.bind   ("<Shift-Down>",        self._shift_up_down)
         self.bind   ("<Alt-Shift-slash>",   self.toggle_dir_select)
         self.bind   ("<Alt-Shift-R>",       self.toggle_undo_redo_reopen)
-        self.bind   ("<Alt-Left>",          lambda e:self.scrollHandler(2))
-        self.bind   ("<Alt-Right>",         lambda e:self.scrollHandler(1))
+        self.bind   ("<Alt-Left>",          lambda e:self.handleScroll(2))
+        self.bind   ("<Alt-Right>",         lambda e:self.handleScroll(1))
         self.bind   ("<Control-A>",         self._select_all)
         self.bind   ("<Control-a>",         self._select_all)
 
@@ -129,23 +125,34 @@ class CEntry(ttk.Entry): # https://stackoverflow.com/a/75367456
     def handlePopupClose(self,e=None):
         self.context_menu.unpost()
 
-    def _wordAtIndex(self,string,index):
+    def handleScroll(self,mode):
+        if mode == 2:
+            self.xview_scroll(-2, "units")
+        else:
+            self.xview_scroll(2, "units")
+        return "break"
+
+    def handleWordAtIndex(self,string,index):
         if self.dir_select == True:
             sp = string.split('/')
         else:
             sp = string.split(' ')
+
         total_len = 0
+
         for word in sp:
-            total_len += (len(word) + 1)    #The '+1' accounts for the underscore
+            total_len += (len(word) + 1)
             if index < total_len:
                 result = word
                 break
 
         end_idx         = self.index(tk.INSERT)
+
         if self.dir_select == True:
-            start_idx       = (self.get().rfind("/", None, end_idx)+1) # magic word-boundary finder <3
+            start_idx       = (self.get().rfind("/", None, end_idx)+1)
         else:
-            start_idx       = (self.get().rfind(" ", None, end_idx)+1) # magic word-boundary finder <3
+            start_idx       = (self.get().rfind(" ", None, end_idx)+1)
+
         _s              = start_idx
         _e = _s + len(result)
         # return (_s,_e,result)
@@ -159,12 +166,16 @@ class CEntry(ttk.Entry): # https://stackoverflow.com/a/75367456
                 self.select_range(0,tk.END)
 
         else:
-            self.select_range(0,tk.END)
+            # print("selecting all")
+            self.after(10, lambda: self.select_range(0,tk.END))
             # self.select_range(0,tk.END)
         return "break"
 
+    def _select_all_menu(self):
+        self.after(10, lambda: self.select_range(0,tk.END))
+
     def _shift_up_down(self,e):
-        index_pack = self._wordAtIndex(e.widget.get(),self.index(tk.INSERT))
+        index_pack = self.handleWordAtIndex(e.widget.get(),self.index(tk.INSERT))
 
         if self.select_present():
             if self.selection_get() == e.widget.get():
@@ -179,37 +190,31 @@ class CEntry(ttk.Entry): # https://stackoverflow.com/a/75367456
 
     def onMouse(self,e):
         self.handlePopupClose()
-        # print(e.num,e.y)
+
         if e.num==5 or e.num ==6:
-            self.scrollHandler(1)
+            self.handleScroll(1)
             return "break"
+
         elif e.num==4 or e.num==7:
-            self.scrollHandler(2)
+            self.handleScroll(2)
             return "break"
 
 
-
-    def scrollHandler(self,mode):
-        if mode == 2:
-            self.xview_scroll(-2, "units")
-        else:
-            self.xview_scroll(2, "units")
-        return "break"
-
-    def entry_ctrl_bs(self, event):
+    def entry_ctrl_bs(self, event): # TODO Automatically adapt to contents separator (";" "/" and so forth)?
         # print()
         if not self.select_present():
             end_idx         = self.index(tk.INSERT)
-            start_idx       = (self.get().rfind(" ", None, end_idx)+1) # magic word-boundary finder <3
+            start_idx       = (self.get().rfind(" ", None, end_idx)+1)
             if end_idx != start_idx:
                 self.selection_range(start_idx, end_idx)
+                if self.selection_get().startswith("\""):
+                    self.selection_range(start_idx+1, end_idx)
 
     def paste(self,e):
         self.on_changes()
 
 
     def popup(self, event):
-        print(event)
         self.focus_set()
         # self.context_menu.entryconfigure( "Paste", command=lambda: self.event_generate("<<Paste>>"),state="normal")
 
@@ -241,8 +246,6 @@ class CEntry(ttk.Entry): # https://stackoverflow.com/a/75367456
             self.context_menu.entryconfigure    ("Select all",state="disabled")
         else:
             self.context_menu.entryconfigure    ("Select all",state="normal")
-
-
 
         self.context_menu.post(event.x_root, event.y_root)
         # self.context_menu.focus_set()
@@ -310,17 +313,21 @@ class CEntry(ttk.Entry): # https://stackoverflow.com/a/75367456
 
         old_view =  self.xview()
         old_index = self.index(tk.INSERT)
+
         if old_index < self.index(tk.END):
             reset_index = True
         else:
             reset_index = False
         content = self._redo_stack.pop()
+
         self._undo_stack.append(content)
         self.entry_text.trace_vdelete("w", self.trace_id)
+
         self.delete(0, tk.END)
         self.insert(0, content)
 
         self.event_generate('<<FieldChanged>>')
+
         # self.icursor(len(content))
         self.trace_id = self.entry_text.trace("w", self.on_changes)
         if reset_index:
@@ -335,7 +342,6 @@ class CEntry(ttk.Entry): # https://stackoverflow.com/a/75367456
         # self.see(tk.INSERT)
         return "break"
 
-
     def on_changes(self, a=None, b=None, c=None):  # noqa
         # Event.VirtualEventData = "poop"
         self.event_generate('<<FieldChanged>>')
@@ -347,24 +353,3 @@ class CEntry(ttk.Entry): # https://stackoverflow.com/a/75367456
         self._redo_stack.clear()
         self._undo_stack.append(self.entry_text.get())
 
-
-# --------------------------------------------------------------------------
-#                                                          HANDLE <CTRL + C>
-def keyboard_interrupt_handler(sig, frame):
-    print('You pressed Ctrl+C!',"Exiting...")
-    sys.exit(0)
-
-# --------------------------------------------------------------------------
-#                                                  MAKE AND SPAWN NEW WINDOW
-
-
-if __name__ == "__main__":
-
-
-    signal.signal(
-        signal.SIGINT,
-        keyboard_interrupt_handler
-    );
-
-    app = CEntry()
-    app.mainloop()
