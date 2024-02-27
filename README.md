@@ -25,7 +25,7 @@ This is the result of two hours of work after starting my first Tkinter tutorial
   - Undo/Redo functionality added
   - Entry-fields are scrollable
   - <Shift+Up> / <Shift+Down> : Rudimentary and buggy "word"/select-all shortcut
-    - <Alt+Shit+/>, <Alt+Shit+;> and <Alt+Shit+Spacebar> switches separator for Shift-select 
+    - <Alt+Shit+/>, <Alt+Shit+;> and <Alt+Shit+Spacebar> sets text-separator for Shift-select 
     - Toggles selection of either the closest space-enclosed text (single letter or word) to the cursor<br>( if the cursor is touching text )
     - Toggles select all text if there is selection present
 - Some slight differences in geometry management
