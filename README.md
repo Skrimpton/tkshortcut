@@ -1,5 +1,5 @@
 # Based on tkshortcut by Roger Savage:
-#### Thanks again for a fun project and being a real cool guy about the fork :)
+#### Thanks again for a fun project and being a real cool guy about the fork 😃👍
 ---
 
 ### [tkshortcut](https://github.com/rogersavage/tkshortcut)
