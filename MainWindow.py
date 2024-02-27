@@ -45,55 +45,56 @@ class MainWindow:
             self.filenameframe                  = ttk.Frame     (   self.main_frame)
             self.buttonframe                    = ttk.Frame     (   self.main_frame)
             self.frame                          = ttk.Frame     (   self.main_frame)
-
-
-            self.filenamelabel                  = ttk.Label     (   self.filenameframe, text = "Filename *:",justify='left',state='disabled')
             self.filenametext                   = TweakedEntry  (   self.filenameframe,font=('Arial',10),enabled=False)
-            self.filenametext.bind              ('<<FieldChanged>>',self.on_changes_name)
-
             self.choose_filename_button         = ttk.Button    (   self.filenameframe, text = "Choose",
                                                                     command    = self.choose_filename
-                                                );
-
-            self.namelabel                      = ttk.Label     (   self.frame, text = "Title:",justify='left')
-            self.nametext                       = TweakedEntry  (   self.frame,font=('Arial',10))
-
-
-            self.outlabel                      = ttk.Label     (   self.frame, text = "Output dir:",justify='left')
-            self.outtext                       = TweakedEntry  (   self.frame,font=('Arial',10))
-            self.outtext.bind                  ('<<FieldChanged>>',self.on_changes_exec)
-            self.btn_sel_out                   = ttk.Button    (   self.frame, text="Choose",
-                                                                    command = self.choose_savepath
-                                                );
-
-            self.execlabel                      = ttk.Label     (   self.frame, text = "Path to Executable *:",justify='left')
+            );
             self.exectext                       = TweakedEntry  (   self.frame,font=('Arial',10))
-            self.exectext.bind                  ('<<FieldChanged>>',self.on_changes_exec)
             self.btn_sel_exec                   = ttk.Button    (   self.frame, text="Choose",
                                                                     command = self.choose_file
-                                                );
-
-            self.iconlabel                      = ttk.Label     (   self.frame, text = "Icon:")
+            );
+            self.outtext                        = TweakedEntry  (   self.frame,font=('Arial',10))
+            self.btn_sel_out                   = ttk.Button    (   self.frame, text="Choose",
+                                                                    command = self.choose_savepath
+            );
+            self.nametext                       = TweakedEntry  (   self.frame,font=('Arial',10))
             self.icontext                       = TweakedEntry  (   self.frame,font=('Arial',10))
             self.choose_icon_button             = ttk.Button    (   self.frame, text="Choose",
                                                                     command = self.choose_icon
-                                                );
+            );
 
 
-        self.btn_ok                       = ttk.Button    (   self.buttonframe, text="Ok",state='disabled',
-                                                                command = self.click_ok
-                                            );
-        self.cancelbutton                   = ttk.Button    (   self.buttonframe, text="Cancel",
-                                                                command = self.quit
-                                            );
+            self.filenamelabel                  = ttk.Label     (   self.filenameframe, text = "Filename *:",justify='left',state='disabled')
+            self.filenametext.bind              ('<<FieldChanged>>',self.on_changes_name)
+
+
+
+            self.outlabel                      = ttk.Label     (   self.frame, text = "Output dir:",justify='left')
+            self.outtext.bind                  ('<<FieldChanged>>',self.on_changes_exec)
+
+            self.namelabel                      = ttk.Label     (   self.frame, text = "Title:",justify='left')
+
+            self.execlabel                      = ttk.Label     (   self.frame, text = "Path to Executable *:",justify='left')
+            self.exectext.bind                  ('<<FieldChanged>>',self.on_changes_exec)
+
+            self.iconlabel                      = ttk.Label     (   self.frame, text = "Icon:")
+
+
+        self.btn_ok         = ttk.Button    (   self.buttonframe, text="Ok",state='disabled',
+                                                command = self.click_ok
+        );
+        self.cancelbutton   = ttk.Button    (   self.buttonframe, text="Cancel",
+                                                command = self.quit
+        );
         self.buildStylegroups()
+
     def buildStylegroups(self):
         for f in (  self.main_frame,
                     self.filenameframe,
                     self.buttonframe,
                     self.frame,
         ):
-            self.styler.stylegroup_frames.append(f)
+            self.styler.stylegroup_frames.append    ( f )
 
         for b in (  self.choose_icon_button,
                     self.btn_sel_out,
@@ -102,7 +103,7 @@ class MainWindow:
                     self.cancelbutton,
                     self.choose_filename_button,
         ):
-            self.styler.stylegroup_buttons.append(b)
+            self.styler.stylegroup_buttons.append   ( b )
 
         for e in (  self.filenametext,
                     self.nametext,
@@ -110,7 +111,7 @@ class MainWindow:
                     self.exectext,
                     self.icontext,
         ):
-            self.styler.stylegroup_entries.append(e)
+            self.styler.stylegroup_entries.append   ( e )
 
         for l in (
             self.namelabel,
@@ -119,7 +120,7 @@ class MainWindow:
             self.execlabel,
             self.iconlabel,
         ):
-            self.styler.stylegroup_labels.append(l)
+            self.styler.stylegroup_labels.append    ( l )
 
 
 
@@ -197,7 +198,6 @@ class MainWindow:
     #                                                           Functional functions
 
     def on_changes_exec(self,event=None): # event info of no value
-
         if os.path.isfile(self.exectext.entry_text.get()):
 
             self.filenametext.configure     (state='enabled')
@@ -233,22 +233,45 @@ class MainWindow:
 
     def click_ok(self):
         filename                            = self.filenametext.get()
-        if os.path.isfile(self.exectext.get()):
-            # if self.outtext.entry_text.get() != "":
-            parent_dir_of_executable            = os.path.dirname(os.path.realpath(self.exectext.get()))
-
-            # if not os.access(parent_dir_of_executable, os.W_OK):
-            #      # https://docs.python.org/3/library/os.html#os.access
-            #     self.root.after(10,lambda: messagebox.showerror(title="Desktop-file creator:",
-            #                          message="Directory is not writable")
-            #     );
-            #     return
-            if filename.endswith(".desktop"):
-                filename = os.path.join(parent_dir_of_executable,filename)
-            else:
-                filename = os.path.join(parent_dir_of_executable,f"{filename}.desktop")
-
+        if os.path.isdir(self.outtext.get()):
             try:
+                os.chdir(self.outtext.get())
+            except PermissionError as e:
+                error_msg = f"Can't save: {self.filenametext.get()}\n\nin:\n\n{self.outtext.get()}"
+
+                print(error_msg)
+                self.root.after(    10,lambda: messagebox.showerror (
+                                        title="Desktop-file creator:",
+                                        message=error_msg
+                                    )
+                );
+                return
+        if os.path.isfile(self.exectext.get()):
+
+            parent_dir_of_executable  = os.path.dirname(os.path.realpath(self.exectext.get()))
+            output_error = False
+            if  len(self.outtext.get()) and os.path.isdir(self.outtext.get()):
+                if os.access(self.outtext.get(), os.W_OK):
+                    output_dir = self.outtext.get()
+                else:
+                    output_error = True
+                    output_dir = parent_dir_of_executable
+            else:
+                output_dir = parent_dir_of_executable
+
+            if filename.endswith(".desktop"):
+                filename = os.path.join(output_dir,filename)
+            else:
+                filename = os.path.join(output_dir,f"{filename}.desktop")
+
+            if os.path.exists(filename):
+                result = messagebox.askquestion (title=f"{os.path.basename(filename)} already exists:",
+                                                 message=f"This alredy exists:\n{filename}\nDo you want to overwrite it?")
+
+                if result == 'no':
+                    return
+            try:
+                # https://docs.python.org/3/library/os.html#os.access --- EAFP
                 with open(filename, "w") as my_file:
 
                     my_file.write               ("[Desktop Entry]\n")
@@ -256,19 +279,25 @@ class MainWindow:
                     my_file.write               ("Exec=" + self.exectext.get() + "\n")
                     my_file.write               ("Icon=" + self.icontext.get() + "\n")
 
-                msg = messagebox.showinfo       (title="Desktop-file creator:",
-                                                message="Shortcut Created")
-                print(msg)
+
+                if output_error:
+                    messagebox.showerror(   title="Desktop-file creator:",
+                                            message=f"Permission Error! Can't write to:\n{self.outtext.get()}\n\nSaved file in:\n{parent_dir_of_executable}")
+
+                else:
+                    messagebox.showinfo(    title="Desktop-file creator:",
+                                            message="Shortcut Created")
+                # print(msg)
                 self.root.destroy               ()
 
             except PermissionError as e:
                 # https://docs.python.org/3/library/os.html#os.access
-                self.root.after(10,lambda: messagebox.showerror(title="Desktop-file creator:",
-                                     message=f"Permission Error! Can't write to:\n{parent_dir_of_executable}")
+                self.root.after     (10,lambda: messagebox.showerror(   title="Desktop-file creator:",
+                                                message=f"Permission Error! Can't write to:\n{parent_dir_of_executable}")
                 );
             except:
-                self.root.after(10,lambda: messagebox.showerror(title="Desktop-file creator:",
-                                     message="SHORTCUT WAS NOT CREATED")
+                self.root.after     (10,lambda: messagebox.showerror(   title="Desktop-file creator:",
+                                                message="SHORTCUT WAS NOT CREATED")
                 );
 
 
@@ -278,8 +307,39 @@ class MainWindow:
         # self.exectext.entry_text.set(fd.askopenfilename())
 
     def choose_savepath(self):
+        has_error = False
+        error_msg = ""
         self.outtext.delete                (0, tk.END)
         self.outtext.insert                (0, fd.askdirectory())
+        cwd = os.getcwd()
+        try:
+            os.chdir(self.outtext.get())
+        except PermissionError as e:
+            has_error = True
+            error_msg = f"Can't enter:\n'{self.outtext.get()}'"
+        except Exception as e:
+            has_error = True
+            error_msg = f"{e}"
+
+        os.chdir(cwd)
+
+        if has_error:
+            print(error_msg)
+            self.root.after(    10,lambda: messagebox.showerror (
+                                    title="Desktop-file creator:",
+                                    message=error_msg
+                                )
+            );
+            return
+        else:
+            if os.access(self.outtext.get(), os.W_OK) == False:
+                error_msg = f"Looks like you can't write to:\n'{self.outtext.get()}'"
+                self.root.after(    10,lambda: messagebox.showerror (
+                                        title="Desktop-file creator:",
+                                        message=error_msg
+                                    )
+                );
+
         # self.exectext.entry_text.set(fd.askopenfilename())
 
     def choose_filename(self):
