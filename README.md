@@ -29,7 +29,8 @@ This is the result of two hours of work after starting my first Tkinter tutorial
     - Toggles selection of either the closest space-enclosed text (single letter or word) to the cursor<br>( if the cursor is touching text )
     - Toggles select all text if there is selection present
 - Some slight differences in geometry management
-- Hardcoded black color-scheme: NOW WITH TOGGLE <Alt+Shift+C> (TODO 1)
+- Black color-scheme
+  - NOW WITH TOGGLE <Alt+Shift+C> (TODO 1)
 - Select output directory
 - Autosuggestion of filename for .desktop file based on executable
 - Creation of the desktop file in the same directory as the selected executable (TODO 2)
