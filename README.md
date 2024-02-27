@@ -35,7 +35,7 @@ This is the result of two hours of work after starting my first Tkinter tutorial
 - Autosuggestion of filename for .desktop file based on executable
 - Creation of the desktop file in the same directory as the selected executable (TODO 2)
 - Some checks and balances for the selected executable
-- Poop jokes hidden in the source-code (only color names, I ran out of descriptive imagination, nothing functional)
+- Poop jokes hidden in the source-code<br>(Only color names, nothing functional. I ran out of descriptive imagination)
 
 ### TODO:
 1. ~~Add toggle on/off~~,
