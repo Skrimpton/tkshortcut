@@ -271,13 +271,28 @@ class MainWindow:
                 if result == 'no':
                     return
             try:
+                if " " in self.exectext.get():
+                    exec_line = f"\"{self.exectext.get()}\""
+                else:
+                    exec_line = self.exectext.get()
+
+                if " " in self.icontext.get():
+                    icon_line = f"\"{self.icontext.get()}\""
+                else:
+                    icon_line = self.icontext.get()
+
+                if " " in self.nametext.get():
+                    name_line = f"\"{self.nametext.get()}\""
+                else:
+                    name_line = self.nametext.get()
+
                 # https://docs.python.org/3/library/os.html#os.access --- EAFP
                 with open(filename, "w") as my_file:
 
                     my_file.write               ("[Desktop Entry]\n")
-                    my_file.write               ("Name=" + self.nametext.get() + "\n")
-                    my_file.write               ("Exec=" + self.exectext.get() + "\n")
-                    my_file.write               ("Icon=" + self.icontext.get() + "\n")
+                    my_file.write               ("Name=" + name_line + "\n")
+                    my_file.write               ("Exec=" + exec_line + "\n")
+                    my_file.write               ("Icon=" + icon_line + "\n")
 
 
                 if output_error:
